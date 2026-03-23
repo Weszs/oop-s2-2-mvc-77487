@@ -1,0 +1,293 @@
+@using oop_s2_2_mvc_77487.Controllers
+@using oop_s2_2_mvc_77487.Services
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>Inspection Dashboard</h1>
+            <p class="text-muted">
+                Welcome, <strong>@User.Identity?.Name</strong>
+                @if (User.IsInRole("Admin"))
+                {
+                    <span class="badge bg-danger ms-2">Admin</span>
+                }
+                else if (User.IsInRole("Inspector"))
+                {
+                    <span class="badge bg-primary ms-2">Inspector</span>
+                }
+                else if (User.IsInRole("Viewer"))
+                {
+                    <span class="badge bg-secondary ms-2">Viewer</span>
+                }
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.IsInRole("Admin") || User.IsInRole("Inspector"))
+            {
+                <a asp-controller="Inspections" asp-action="Create" class="btn btn-success me-1">+ New Inspection</a>
+                <a asp-controller="FollowUps" asp-action="Create" class="btn btn-outline-success">+ New Follow-up</a>
+            }
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label for="town" class="form-label"><strong>Filter by Town</strong></label>
+                        <select name="town" id="town" class="form-select">
+                            <option value="">All Towns</option>
+                            @foreach (var t in Model.Towns)
+                            {
+                                <option value="@t" selected="@(Model.TownFilter == t)">@t</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="riskRating" class="form-label"><strong>Filter by Risk Rating</strong></label>
+                        <select name="riskRating" id="riskRating" class="form-select">
+                            <option value="">All Risk Ratings</option>
+                            @foreach (var rating in Model.RiskRatings)
+                            {
+                                <option value="@rating" selected="@(Model.RiskRatingFilter == rating)">@rating</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                    <div class="col-md-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Premises</h6>
+                    <p class="display-5">@Model.TotalPremises</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Inspections (Month)</h6>
+                    <p class="display-5 text-primary">@Model.InspectionsThisMonth</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Failed (Month)</h6>
+                    <p class="display-5 text-danger">@Model.FailedInspectionsThisMonth</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Overdue Follow-ups</h6>
+                    <p class="display-5 text-warning">@Model.OverdueFollowUps</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Open Follow-ups</h6>
+                    <p class="display-5 text-info">@Model.OpenFollowUps</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card shadow-sm text-center border-danger">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">High Risk</h6>
+                    <p class="display-5 text-danger">@Model.HighRiskPremisesCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <strong>Recent Inspections</strong>
+                    <a asp-controller="Inspections" asp-action="Index" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.RecentInspections.Any())
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Premises</th>
+                                    <th>Score</th>
+                                    <th>Outcome</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var insp in Model.RecentInspections)
+                                {
+                                    <tr>
+                                        <td>@insp.InspectionDate.ToString("dd MMM yyyy")</td>
+                                        <td>
+                                            <a asp-controller="Premises" asp-action="Details" asp-route-id="@insp.PremisesId">
+                                                @insp.Premises?.Name
+                                            </a>
+                                        </td>
+                                        <td>@insp.Score/100</td>
+                                        <td>
+                                            <span class="badge bg-@(insp.Outcome == oop_s2_2_mvc_77487.Models.InspectionOutcome.Pass ? "success" : "danger")">
+                                                @insp.Outcome
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted">No inspections found for the selected filters.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm mb-4 border-warning">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <strong>Overdue Follow-ups</strong>
+                    <a asp-controller="FollowUps" asp-action="Index" class="btn btn-sm btn-outline-dark">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.OverdueFollowUpList.Any())
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Due Date</th>
+                                    <th>Premises</th>
+                                    <th>Days Overdue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fu in Model.OverdueFollowUpList)
+                                {
+                                    var daysOverdue = (DateTime.Now - fu.DueDate).Days;
+                                    <tr class="table-warning">
+                                        <td>
+                                            <a asp-controller="FollowUps" asp-action="Details" asp-route-id="@fu.Id">
+                                                @fu.DueDate.ToString("dd MMM yyyy")
+                                            </a>
+                                        </td>
+                                        <td>@fu.Inspection?.Premises?.Name</td>
+                                        <td><span class="badge bg-danger">@daysOverdue days</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-success">No overdue follow-ups.</div>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4 border-danger">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <strong>High Risk Premises</strong>
+                    <a asp-controller="Premises" asp-action="Index" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.HighRiskPremises.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var p in Model.HighRiskPremises)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a asp-controller="Premises" asp-action="Details" asp-route-id="@p.Id">
+                                        @p.Name
+                                    </a>
+                                    <small class="text-muted">@p.Town</small>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-success">No high-risk premises in this filter.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Trail (Admin Only) -->
+    @if (User.IsInRole("Admin") && Model.RecentAuditEntries != null && Model.RecentAuditEntries.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <strong>Recent Audit Trail</strong>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="AuditLog" class="btn btn-sm btn-outline-light">Full Audit Log</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                    <th>Entity</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.RecentAuditEntries.Take(10))
+                                {
+                                    <tr>
+                                        <td><small>@entry.Timestamp.ToString("dd MMM HH:mm:ss")</small></td>
+                                        <td><span class="badge bg-info">@entry.Action</span></td>
+                                        <td>@entry.EntityType</td>
+                                        <td><small>@entry.Details</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row mt-3 mb-5">
+        <div class="col-12">
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a asp-controller="Premises" asp-action="Index" class="btn btn-outline-secondary">All Premises</a>
+                <a asp-controller="Inspections" asp-action="Index" class="btn btn-outline-info">All Inspections</a>
+                <a asp-controller="FollowUps" asp-action="Index" class="btn btn-outline-warning">All Follow-ups</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-outline-danger">Admin Panel</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+@model oop_s2_2_mvc_77487.Models.Inspection
+
+@{
+    ViewData["Title"] = "Edit Inspection";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1>Edit Inspection</h1>
+
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="PremisesId" class="form-label"></label>
+                    <select asp-for="PremisesId" class="form-select" asp-items="ViewBag.PremisesId"></select>
+                    <span asp-validation-for="PremisesId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="InspectionDate" class="form-label"></label>
+                    <input asp-for="InspectionDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="InspectionDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Score" class="form-label"></label>
+                    <input asp-for="Score" class="form-control" type="number" min="0" max="100" />
+                    <small class="form-text text-muted">Enter score between 0 and 100</small>
+                    <span asp-validation-for="Score" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Outcome" class="form-label"></label>
+                    <select asp-for="Outcome" class="form-select">
+                        <option value="">Select Outcome</option>
+                        <option value="Pass" selected="@(Model.Outcome == oop_s2_2_mvc_77487.Models.InspectionOutcome.Pass)">Pass</option>
+                        <option value="Fail" selected="@(Model.Outcome == oop_s2_2_mvc_77487.Models.InspectionOutcome.Fail)">Fail</option>
+                    </select>
+                    <span asp-validation-for="Outcome" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

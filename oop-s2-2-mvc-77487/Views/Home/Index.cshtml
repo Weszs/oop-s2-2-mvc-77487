@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+            <h1 class="display-4">Food Safety Inspection Tracker</h1>
+            <p class="lead text-muted">
+                A local council system for tracking food premises inspections, outcomes, and follow-ups.
+                Management visibility into what's happening and when things fail.
+            </p>
+            <hr />
+        </div>
+    </div>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Dashboard</h5>
+                        <p class="card-text">View inspection statistics, overdue follow-ups, and filter by town or risk rating.</p>
+                        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Premises</h5>
+                        <p class="card-text">Manage food premises including names, addresses, towns, and risk ratings.</p>
+                        <a asp-controller="Premises" asp-action="Index" class="btn btn-secondary">View Premises</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Inspections</h5>
+                        <p class="card-text">Record inspection outcomes with scores, pass/fail results, and notes.</p>
+                        <a asp-controller="Inspections" asp-action="Index" class="btn btn-info text-white">View Inspections</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4 offset-md-2">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Follow-ups</h5>
+                        <p class="card-text">Track open and overdue follow-ups from failed inspections.</p>
+                        <a asp-controller="FollowUps" asp-action="Index" class="btn btn-warning">View Follow-ups</a>
+                    </div>
+                </div>
+            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100 border-danger">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Admin Panel</h5>
+                            <p class="card-text">View audit trail, manage users, and access admin functions.</p>
+                            <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-danger">Admin Panel</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-8 offset-md-2">
+                <div class="alert alert-secondary text-center">
+                    <strong>Logged in as:</strong> @User.Identity?.Name
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span class="badge bg-danger ms-2">Admin</span>
+                    }
+                    else if (User.IsInRole("Inspector"))
+                    {
+                        <span class="badge bg-primary ms-2">Inspector</span>
+                    }
+                    else if (User.IsInRole("Viewer"))
+                    {
+                        <span class="badge bg-secondary ms-2">Viewer</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-3 text-center">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4>Get Started</h4>
+                        <p>Please login or register to access the inspection tracking system.</p>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg me-2">Login</a>
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-outline-success btn-lg">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-8 offset-md-2">
+                <h3 class="text-center mb-4">System Roles</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white text-center"><strong>Admin</strong></div>
+                            <div class="card-body"><small>Full access to all features including CRUD operations on premises, inspections, follow-ups, and audit trail viewing.</small></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white text-center"><strong>Inspector</strong></div>
+                            <div class="card-body"><small>Can create and edit inspections and follow-ups. Can view all data but cannot delete or manage premises.</small></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-secondary text-white text-center"><strong>Viewer / Manager</strong></div>
+                            <div class="card-body"><small>Read-only access to dashboards, premises, inspections, and follow-ups. No create or edit permissions.</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

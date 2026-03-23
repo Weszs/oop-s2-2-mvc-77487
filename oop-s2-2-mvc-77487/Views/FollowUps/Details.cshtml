@@ -1,0 +1,47 @@
+@model oop_s2_2_mvc_77487.Models.FollowUp
+
+@{
+    ViewData["Title"] = "Follow-up Details";
+}
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>Follow-up Details</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.IsInRole("Admin") || User.IsInRole("Inspector"))
+            {
+                @if (Model.Status == oop_s2_2_mvc_77487.Models.FollowUpStatus.Open)
+                {
+                    <a asp-action="Close" asp-route-id="@Model.Id" class="btn btn-success">Close Follow-up</a>
+                }
+            }
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Premises:</strong> <a asp-controller="Premises" asp-action="Details" asp-route-id="@Model.Inspection?.PremisesId">@Model.Inspection?.Premises?.Name</a></p>
+            <p><strong>Inspection:</strong> <a asp-controller="Inspections" asp-action="Details" asp-route-id="@Model.InspectionId">@Model.Inspection?.InspectionDate.ToString("yyyy-MM-dd")</a></p>
+            <p><strong>Due Date:</strong> @Model.DueDate.ToString("yyyy-MM-dd")</p>
+            <p>
+                <strong>Status:</strong>
+                <span class="badge bg-@(Model.Status == oop_s2_2_mvc_77487.Models.FollowUpStatus.Open ? "warning" : "success")">
+                    @Model.Status
+                </span>
+            </p>
+            @if (Model.ClosedDate.HasValue)
+            {
+                <p><strong>Closed Date:</strong> @Model.ClosedDate.Value.ToString("yyyy-MM-dd")</p>
+            }
+            @if (Model.Status == oop_s2_2_mvc_77487.Models.FollowUpStatus.Open && Model.DueDate < DateTime.Now)
+            {
+                <div class="alert alert-warning mt-3">
+                    <strong>Warning:</strong> This follow-up is overdue!
+                </div>
+            }
+        </div>
+    </div>
+</div>

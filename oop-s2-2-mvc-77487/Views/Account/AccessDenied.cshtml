@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Access Denied</h3>
+                </div>
+                <div class="card-body">
+                    <p class="display-1 text-danger">403</p>
+                    <h4>You do not have permission to access this resource.</h4>
+                    <p class="text-muted mt-3">
+                        Your current role does not grant access to the requested page.
+                        If you believe this is an error, please contact your administrator.
+                    </p>
+                    <hr />
+                    <p>
+                        <strong>Logged in as:</strong> @User.Identity?.Name<br />
+                    </p>
+                    <div class="mt-4">
+                        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary me-2">Go to Dashboard</a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Go Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

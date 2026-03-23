@@ -1,0 +1,70 @@
+@model oop_s2_2_mvc_77487.Models.Premises
+
+@{
+    ViewData["Title"] = "Premises Details";
+}
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h1>@Model.Name</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Town:</strong> @Model.Town</p>
+            <p>
+                <strong>Risk Rating:</strong>
+                <span class="badge bg-@(Model.RiskRating == oop_s2_2_mvc_77487.Models.RiskRating.Low ? "success" : Model.RiskRating == oop_s2_2_mvc_77487.Models.RiskRating.Medium ? "warning" : "danger")">
+                    @Model.RiskRating
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <h3>Inspections</h3>
+    @if (Model.Inspections.Any())
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Outcome</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var inspection in Model.Inspections.OrderByDescending(i => i.InspectionDate))
+                {
+                    <tr>
+                        <td>@inspection.InspectionDate.ToString("yyyy-MM-dd")</td>
+                        <td>@inspection.Score</td>
+                        <td>
+                            <span class="badge bg-@(inspection.Outcome == oop_s2_2_mvc_77487.Models.InspectionOutcome.Pass ? "success" : "danger")">
+                                @inspection.Outcome
+                            </span>
+                        </td>
+                        <td>@inspection.Notes</td>
+                        <td><a asp-controller="Inspections" asp-action="Details" asp-route-id="@inspection.Id" class="btn btn-sm btn-info">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No inspections for this premises.</div>
+    }
+</div>

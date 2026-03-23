@@ -1,0 +1,64 @@
+@model IEnumerable<oop_s2_2_mvc_77487.Models.Inspection>
+
+@{
+    ViewData["Title"] = "Inspections";
+}
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h1>Inspections</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            @if (User.IsInRole("Admin") || User.IsInRole("Inspector"))
+            {
+                <a asp-action="Create" class="btn btn-primary">Create New Inspection</a>
+            }
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Premises</th>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Outcome</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Premises?.Name</td>
+                        <td>@item.InspectionDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.Score</td>
+                        <td>
+                            <span class="badge bg-@(item.Outcome == oop_s2_2_mvc_77487.Models.InspectionOutcome.Pass ? "success" : "danger")">
+                                @item.Outcome
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Inspector"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No inspections found.</div>
+    }
+</div>

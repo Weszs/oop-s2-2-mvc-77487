@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Account Locked Out";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="card shadow border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">Account Locked</h3>
+                </div>
+                <div class="card-body">
+                    <h4>Your account has been temporarily locked.</h4>
+                    <p class="text-muted mt-3">
+                        Too many failed login attempts. Please wait a few minutes and try again,
+                        or contact your administrator for assistance.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Try Again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

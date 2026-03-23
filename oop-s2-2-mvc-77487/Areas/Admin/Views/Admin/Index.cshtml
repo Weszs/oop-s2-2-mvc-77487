@@ -1,0 +1,146 @@
+@using oop_s2_2_mvc_77487.Areas.Admin.Controllers
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Admin Panel</h1>
+            <p class="text-muted">Full system overview and administrative controls</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center border-primary">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Premises</h6>
+                    <p class="display-5 text-primary">@Model.TotalPremises</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Inspections</h6>
+                    <p class="display-5">@Model.TotalInspections</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Follow-ups</h6>
+                    <p class="display-5">@Model.TotalFollowUps</p>
+                    <small class="text-muted">Open: @Model.OpenFollowUps | Overdue: <span class="text-danger">@Model.OverdueFollowUps</span></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Registered Users</h6>
+                    <p class="display-5">@Model.TotalUsers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Inspections This Month</h6>
+                    <p class="display-5 text-info">@Model.InspectionsThisMonth</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center border-danger">
+                <div class="card-body">
+                    <h6 class="text-muted">Failed This Month</h6>
+                    <p class="display-5 text-danger">@Model.FailedThisMonth</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Quick Actions</h6>
+                    <div class="d-flex gap-2 flex-wrap mt-3">
+                        <a asp-area="" asp-controller="Premises" asp-action="Create" class="btn btn-primary">+ New Premises</a>
+                        <a asp-area="" asp-controller="Inspections" asp-action="Create" class="btn btn-success">+ New Inspection</a>
+                        <a asp-area="" asp-controller="FollowUps" asp-action="Create" class="btn btn-warning">+ New Follow-up</a>
+                        <a asp-action="AuditLog" class="btn btn-dark">Full Audit Log</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <strong>Recent Audit Trail</strong>
+                    <a asp-action="AuditLog" class="btn btn-sm btn-outline-light">View Full Log</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.RecentAuditEntries.Any())
+                    {
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp (UTC)</th>
+                                    <th>User ID</th>
+                                    <th>Action</th>
+                                    <th>Entity</th>
+                                    <th>Entity ID</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.RecentAuditEntries)
+                                {
+                                    <tr>
+                                        <td><small>@entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small></td>
+                                        <td><small>@entry.UserId</small></td>
+                                        <td>
+                                            @{
+                                                var badgeClass = entry.Action switch
+                                                {
+                                                    "Login" => "bg-success",
+                                                    "Logout" => "bg-secondary",
+                                                    "LoginFailed" => "bg-danger",
+                                                    "Register" => "bg-info",
+                                                    _ => "bg-primary"
+                                                };
+                                            }
+                                            <span class="badge @badgeClass">@entry.Action</span>
+                                        </td>
+                                        <td>@entry.EntityType</td>
+                                        <td>@(entry.EntityId?.ToString() ?? "-")</td>
+                                        <td><small>@entry.Details</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted">No audit entries recorded yet. Actions will appear here as users interact with the system.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-5">
+        <div class="col-12 text-center">
+            <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>

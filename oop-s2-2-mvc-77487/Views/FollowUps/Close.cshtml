@@ -1,0 +1,25 @@
+@model oop_s2_2_mvc_77487.Models.FollowUp
+
+@{
+    ViewData["Title"] = "Close Follow-up";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1>Close Follow-up</h1>
+
+            <div class="alert alert-info" role="alert">
+                <p>Are you sure you want to close this follow-up?</p>
+                <p><strong>Premises:</strong> @Model.Inspection?.Premises?.Name</p>
+                <p><strong>Due Date:</strong> @Model.DueDate.ToString("yyyy-MM-dd")</p>
+            </div>
+
+            <form asp-action="Close">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-success">Confirm Close</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+@model oop_s2_2_mvc_77487.Models.Premises
+
+@{
+    ViewData["Title"] = "Delete Premises";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1>Delete Premises</h1>
+
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Confirm Deletion</h4>
+                <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                <p>This action will also delete all associated inspections and follow-ups.</p>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.Name</p>
+                    <p><strong>Address:</strong> @Model.Address</p>
+                    <p><strong>Town:</strong> @Model.Town</p>
+                    <p><strong>Risk Rating:</strong> @Model.RiskRating</p>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
